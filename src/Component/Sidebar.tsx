@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { House, SquaresFour, Heart, ChartBar, Users, Gear, CaretDown, Plus } from 'phosphor-react';
+import { House, SquaresFour, Heart, ChartBar, Users, Gear, CaretDown, Plus, ArrowLeft } from 'phosphor-react';
 
 const Sidebar: React.FC = () => {
   const [isWorkspaceExpanded, setIsWorkspaceExpanded] = useState(true);
+  const [activeSection, setActiveSection] = useState('default');
   const location = useLocation();
 
   const hoverClass = "hover:bg-gray-100 hover:text-purple-600 cursor-pointer transition-colors duration-200 rounded-md";
@@ -11,8 +12,8 @@ const Sidebar: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  return (
-    <aside className="w-80 bg-white pl-12 py-32 h-screen p-4">
+  const renderDefaultSidebar = () => (
+    <>
       <div className="mb-4">
         <Link to="/boards" className={`text-gray-600 p-2 mb-2 flex items-center ${hoverClass} ${isActive('/boards') ? activeClass : ''}`}>
           <SquaresFour size={20} className="mr-2" />
@@ -54,7 +55,10 @@ const Sidebar: React.FC = () => {
                 <ChartBar size={16} className="mr-2" />
                 <span>Reports</span>
               </Link>
-              <Link to="/workspace/members" className={`flex items-center justify-between p-1 ${hoverClass} ${isActive('/workspace/members') ? activeClass : ''}`}>
+              <div 
+                className={`flex items-center justify-between p-1 ${hoverClass} ${isActive('/workspace/members') ? activeClass : ''}`}
+                onClick={() => setActiveSection('members')}
+              >
                 <div className="flex items-center">
                   <Users size={16} className="mr-2" />
                   <span>Member</span>
@@ -63,7 +67,7 @@ const Sidebar: React.FC = () => {
                   <Plus size={16} className="mr-1" />
                   <CaretDown size={16} />
                 </div>
-              </Link>
+              </div>
               <Link to="/workspace/settings" className={`flex items-center justify-between p-1 ${hoverClass} ${isActive('/workspace/settings') ? activeClass : ''}`}>
                 <div className="flex items-center">
                   <Gear size={16} className="mr-2" />
@@ -75,6 +79,55 @@ const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
+    </>
+  );
+
+  const renderMemberSidebar = () => (
+    <>
+      <div className="mb-4">
+        <button
+          className={`text-gray-600 p-2 mb-2 flex items-center ${hoverClass}`}
+          onClick={() => setActiveSection('default')}
+        >
+          <ArrowLeft size={20} className="mr-2" />
+          <span>Back</span>
+        </button>
+        <Link to="/workspace/boards" className={`flex items-center p-1 ${hoverClass} ${isActive('/workspace/boards') ? activeClass : ''}`}>
+          <SquaresFour size={16} className="mr-2" />
+          <span>Boards</span>
+        </Link>
+        <div className={`flex items-center justify-between p-1 ${hoverClass} ${isActive('/workspace/members') ? activeClass : ''}`}>
+          <div className="flex items-center">
+            <Users size={16} className="mr-2" />
+            <span>Member</span>
+          </div>
+          <div className="flex items-center">
+            <Plus size={16} className="mr-1" />
+            <CaretDown size={16} />
+          </div>
+        </div>
+        <div className="pl-6">
+          <Link to="/workspace/settings" className={`flex items-center justify-between p-1 ${hoverClass} ${isActive('/workspace/settings') ? activeClass : ''}`}>
+            <div className="flex items-center">
+              <Gear size={16} className="mr-2" />
+              <span>Workspace setting</span>
+            </div>
+            <CaretDown size={16} />
+          </Link>
+          <Link to="/workspace/reports" className={`flex items-center p-1 ${hoverClass} ${isActive('/workspace/reports') ? activeClass : ''}`}>
+            <ChartBar size={16} className="mr-2" />
+            <span>Reports</span>
+          </Link>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <aside className="w-80 bg-white pl-12 py-32 h-screen p-4">
+      <div className="logo mb-8">
+      </div>
+      {activeSection === 'default' ? renderDefaultSidebar() : renderMemberSidebar()}
     </aside>
   );
 };
